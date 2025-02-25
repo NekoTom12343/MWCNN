@@ -14,7 +14,6 @@ import torchvision.transforms as transforms
 from utils.training_util import load_checkpoint
 import math
 from PIL import Image
-import glob
 import time
 
 torch.set_num_threads(4)
@@ -67,7 +66,7 @@ def test(args):
                 plt.figure(figsize=(15, 15))
                 plt.imshow(np.array(trans(pred[0])))
                 plt.title("denoise KPN DGF " + args.model_type, fontsize=25)
-                image_name = noisy_path[i].split("/")[-1].split(".")[0]
+                image_name = f"image_{step}"
                 plt.axis("off")
                 plt.suptitle(image_name + "   UP   :  PSNR : " + str(psnr_t) + " :  SSIM : " + str(ssim_t), fontsize=25)
                 plt.savefig(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '.png'), pad_inches=0)
