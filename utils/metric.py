@@ -23,15 +23,17 @@ def calculate_psnr(output_img, target_img):
         n += 1.0
     return psnr / n
 
-def calculate_ssim(output_img, target_img):
+def calculate_ssim(output_img, target_img, win_size=7):
     target_tf = torch2numpy(target_img)
     output_tf = torch2numpy(output_img)
-    ssim = 0.0
+    ssim_value = 0.0
     n = 0.0
     for im_idx in range(output_tf.shape[0]):
-        ssim += structural_similarity(target_tf[im_idx, ...],
-                                      output_tf[im_idx, ...],
-                                      multichannel=True,
-                                      data_range=255)
+        ssim_value += structural_similarity(target_tf[im_idx, ...],
+                                            output_tf[im_idx, ...],
+                                            multichannel=True,
+                                            data_range=255,
+                                            win_size=win_size,
+                                            channel_axis=2)  # Assuming the channel axis is the last axis
         n += 1.0
-    return ssim / n
+    return ssim_value / n

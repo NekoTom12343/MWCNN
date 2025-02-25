@@ -23,7 +23,7 @@ torch.manual_seed(0)
 
 def test(args):
     model = Model(args)
-    save_img = ''
+    save_img = args.save_img
     checkpoint_dir = args.checkpoint
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     try:
