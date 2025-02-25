@@ -35,7 +35,7 @@ def _represent_int(s):
         return True
     except ValueError:
         return False
-def load_checkpoint(checkpoint_dir,cuda = False, best_or_latest='best'):
+def load_checkpoint(checkpoint_dir, cuda=True, best_or_latest='best'):
     if best_or_latest == 'best':
         checkpoint_file = os.path.join(checkpoint_dir, 'model_best.pth.tar')
     elif isinstance(best_or_latest, numbers.Number):
@@ -52,8 +52,10 @@ def load_checkpoint(checkpoint_dir,cuda = False, best_or_latest='best'):
         iters = sorted([int(b) for b in basenames if _represent_int(b)])
         checkpoint_file = os.path.join(checkpoint_dir,
                                        '{:06d}.pth.tar'.format(iters[-1]))
+    
     if cuda:
-        load_result = torch.load(checkpoint_file)
+        load_result = torch.load(checkpoint_file, weights_only=True)
     else:
-        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'))
+        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'), weights_only=True)
+    
     return load_result
