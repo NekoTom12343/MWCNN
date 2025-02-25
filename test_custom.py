@@ -44,7 +44,7 @@ def test(args):
     model.eval()
     trans = transforms.ToPILImage()
     torch.manual_seed(0)
-    noisy_path = sorted(glob.glob(args.noise_dir+ "/*.png"))
+    noisy_path = sorted(glob.glob(args.noise_dir+ "/*.PNG"))
     clean_path = [ i.replace("noisy","clean") for i in noisy_path]
     print(len(noisy_path))
     for i in range(len(noisy_path)):
