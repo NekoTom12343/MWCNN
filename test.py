@@ -29,13 +29,14 @@ if __name__ == "__main__":
     )
     model = Model(args)
 
-    state_dict = torch.load('experiment/checkpoint')
+    state_dict = torch.load('F:\python\MWCNN\checkpoints\model_best.pth.tar')
+    print("state_dict",state_dict.keys())
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
         name = "model."+ k  # remove `module.`
         new_state_dict[name] = v
-    model.load_state_dict(new_state_dict)
-    # model.load_state_dict(state_dict)
+    # model.load_state_dict(new_state_dict)
+    model.load_state_dict(state_dict)
     model.eval()
     trans = transforms.ToPILImage()
     for epoch in range(10):

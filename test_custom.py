@@ -29,7 +29,7 @@ def test(args):
     save_img = ''
     # summary(model,[[3,128,128],[0]])
     # exit()
-    checkpoint_dir = "checkpoint/"
+    checkpoint_dir = args.checkpoint
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     try:
         checkpoint = load_checkpoint(checkpoint_dir, device == 'cuda', 'latest')
@@ -51,7 +51,7 @@ def test(args):
         noise = noise.to(device)
         begin = time.time()
         # print(feedData.size())
-        pred = model(noise,0)
+        pred = model(noise)
         pred = pred.detach().cpu()
         gt = transforms.ToTensor()(Image.open(clean_path[i]).convert('RGB'))
         gt = gt.unsqueeze(0)
