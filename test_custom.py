@@ -46,6 +46,7 @@ def test(args):
     torch.manual_seed(0)
     noisy_path = sorted(glob.glob(args.noise_dir+ "/*.png"))
     clean_path = [ i.replace("noisy","clean") for i in noisy_path]
+    print(len(noisy_path))
     for i in range(len(noisy_path)):
         noise = transforms.ToTensor()(Image.open(noisy_path[i]).convert('RGB')).unsqueeze(0)
         noise = noise.to(device)
