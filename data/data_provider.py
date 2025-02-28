@@ -118,7 +118,7 @@ class SingleLoader(data.Dataset):
         # name_image_gt = self.noise_path[index].split("/")[-1].replace("NOISY_", "GT_")
         # image_folder_name_gt = self.noise_path[index].split("/")[-2].replace("NOISY_", "GT_")
         # image_gt = Image.open(os.path.join(self.gt_dir, image_folder_name_gt, name_image_gt)).convert('RGB')
-        image_gt = Image.open(self.noise_path[index].replace("Noisy",'Clean')).convert('RGB')
+        image_gt = Image.open(self.gt_path[index]).convert('RGB')
         # image_noise = random_flip(image_noise,rand_hflip,rand_vflip)
         # image_gt = random_flip(image_gt,rand_hflip,rand_vflip)
         image_noise = self.transforms(image_noise)
