@@ -82,8 +82,6 @@ if __name__ == "__main__":
             print('=> no checkpoint file to be loaded.')
     for epoch in range(start_epoch, args.epochs):
         for step, (noise, gt) in enumerate(data_loader):
-            print(f"Step {step}: noise shape: {noise.shape}, noise type: {type(noise)}")
-            print(f"Step {step}: gt shape: {gt.shape}, gt type: {type(gt)}")
             noise = noise.to(device)
             gt = gt.to(device)
             pred = model(noise)
