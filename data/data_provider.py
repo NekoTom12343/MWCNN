@@ -123,8 +123,7 @@ class SingleLoader(data.Dataset):
 
         # Load the ground truth image
         image_gt = Image.open(image_gt_path).convert('RGB')
-        print(image_gt_path)
-        print(image_noise_path)
+        
         # Transform images to tensors
         image_noise = self.transforms(image_noise)
         image_gt = self.transforms(image_gt)
