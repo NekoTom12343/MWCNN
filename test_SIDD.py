@@ -49,7 +49,7 @@ def test(args):
         num_workers=4
     )
 
-    for epoch in range(10):
+    for epoch in range(1):
         for step, (noise, gt) in enumerate(data_loader):
             noise = noise.to(device)
             gt = gt.to(device)
@@ -64,10 +64,26 @@ def test(args):
                 if not os.path.exists(args.save_img):
                     os.makedirs(args.save_img)
                 plt.figure(figsize=(15, 15))
-                plt.imshow(np.array(trans(pred[0])))
-                plt.title("denoise KPN DGF " + args.model_type, fontsize=25)
-                image_name = f"image_{step}"
+                
+                # Show the noise image
+                plt.subplot(1, 3, 1)
+                plt.imshow(np.array(trans(noise[0].cpu())))
+                plt.title("Noise", fontsize=25)
                 plt.axis("off")
+                
+                # Show the GT image
+                plt.subplot(1, 3, 2)
+                plt.imshow(np.array(trans(gt[0].cpu())))
+                plt.title("GT", fontsize=25)
+                plt.axis("off")
+                
+                # Show the denoised image
+                plt.subplot(1, 3, 3)
+                plt.imshow(np.array(trans(pred[0])))
+                plt.title("Denoise", fontsize=25)
+                plt.axis("off")
+                
+                image_name = f"image_{step}"
                 plt.suptitle(image_name + "   UP   :  PSNR : " + str(psnr_t) + " :  SSIM : " + str(ssim_t), fontsize=25)
                 plt.savefig(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '.png'), pad_inches=0)
             # Free up memory by deleting variables and clearing the GPU cache
