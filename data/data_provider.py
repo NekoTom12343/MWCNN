@@ -181,6 +181,7 @@ class SingleLoader_raw(data.Dataset):
 
         image_gt = getattr(augment, apply_trans)(image_gt)
         image_noise = getattr(augment, apply_trans)(image_noise)
+        print(f"Index {index}: image_noise shape: {image_noise.shape}, image_gt shape: {image_gt.shape}")
 
         return image_noise, image_gt
 
