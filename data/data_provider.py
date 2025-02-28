@@ -25,7 +25,7 @@ def random_cut(image_noise, image_gt, w, h=None):
     h = w if h is None else h
     nw = image_gt.size(-1) - w
     nh = image_gt.size(-2) - h
-    if nw < 0 or nh < 0:
+    if nw <= 0 or nh <= 0:
         raise RuntimeError("Image is to small {} for the desired size {}". \
                            format((image_gt.size(-1), image_gt.size(-2)), (w, h))
                            )
