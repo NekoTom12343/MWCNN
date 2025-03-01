@@ -116,4 +116,4 @@ def train_fn(rank, args):
 
 if __name__ == "__main__":
     # Launch training on TPU
-    xmp.spawn(train_fn, args=(args,), nprocs=8, start_method='fork')
+    xmp.spawn(train_fn, args=(args,), nprocs=4, start_method='fork')
