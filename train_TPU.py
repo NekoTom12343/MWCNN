@@ -39,7 +39,7 @@ def train_fn(rank, args):
         data_set,
         batch_size=args.batch_size,
         shuffle=False,
-        num_workers=0  # Use 0 workers since TPU handles parallelism differently
+        num_workers=args.num_workers  # Use 0 workers since TPU handles parallelism differently
     )
 
     loss_func = loss_module.CharbonnierLoss()
