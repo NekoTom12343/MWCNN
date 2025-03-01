@@ -3,7 +3,7 @@ import argparse
 # import utility
 from model.mwcnn import Model
 from torch.utils.data import DataLoader
-import loss
+import loss as loss_module
 import os
 
 # Import necessary libraries for TPU
@@ -42,7 +42,7 @@ def train_fn(rank, args):
         num_workers=0  # Use 0 workers since TPU handles parallelism differently
     )
 
-    loss_func = loss.CharbonnierLoss()
+    loss_func = loss_module.CharbonnierLoss()
     device = xm.xla_device()  # Set device to TPU
     checkpoint_dir = args.checkpoint
     if not os.path.exists(checkpoint_dir):
