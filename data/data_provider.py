@@ -92,11 +92,11 @@ class SingleLoader(data.Dataset):
         self.noise_dir = noise_dir
         self.gt_dir = gt_dir
         self.image_size = image_size
-        self.noise_path = []
+        self.noise_path = set()
         
         # Gather all noisy image paths
         for files_ext in IMG_EXTENSIONS:
-            self.noise_path.extend(glob.glob(os.path.join(self.noise_dir, "**/*" + files_ext), recursive=True))
+            self.noise_path.update(glob.glob(os.path.join(self.noise_dir, "*" + files_ext), recursive=True))
 
         if len(self.noise_path) == 0:
             raise RuntimeError("Found 0 images in subfolders of: " + self.noise_dir + "\n"
