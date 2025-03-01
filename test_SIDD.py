@@ -85,7 +85,7 @@ def test(args):
                 
                 image_name = f"image_{step}"
                 plt.suptitle(image_name + "   UP   :  PSNR : " + str(psnr_t) + " :  SSIM : " + str(ssim_t), fontsize=25)
-                plt.savefig(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '.png'), pad_inches=0)
+                plt.savefig(os.path.join(args.save_img, image_name + "_" + global_step + '.png'), pad_inches=0)
             # Free up memory by deleting variables and clearing the GPU cache
             del noise, pred, gt
             torch.cuda.empty_cache()
