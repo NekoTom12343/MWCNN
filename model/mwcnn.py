@@ -81,7 +81,7 @@ class Model(nn.Module):
     def __init__(self, args):
         super(Model, self).__init__()
         print('Making model...')
-
+        self.n_GPUs = args.n_GPUs
         self.scale = args.scale
         self.idx_scale = 0
         self.self_ensemble = args.self_ensemble
@@ -92,6 +92,8 @@ class Model(nn.Module):
 
         module = import_module('model.' + args.model.lower())
         self.model = module.make_model(n_colors=args.n_colors, batchnorm=args.batchnorm).to(self.device)
+        if self.n_GPUs > 1:
+            self.model = nn.DataParallel(self.model, range(self.n_GPUs))
         if args.precision == 'half': self.model.half()
 
 
