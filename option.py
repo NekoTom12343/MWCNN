@@ -57,7 +57,8 @@ parser.add_argument('--chop', action='store_true',
 # Model specifications
 parser.add_argument('--model', default='MWCNN',
                     help='model name')
-
+parser.add_argument('--batchnorm', action='store_true', 
+                    help="Enable batch normalization in all layers")
 parser.add_argument('--act', type=str, default='relu',
                     help='activation function')
 parser.add_argument('--pre_train', type=str, default='.',
