@@ -5,49 +5,53 @@ import scipy.io as sio
 import os
 from importlib import import_module
 
-def make_model(n_resblocks=20,n_feats=64 ,n_colors=3):
-    return MWCNN(n_resblocks=n_resblocks,n_feats=n_feats ,n_colors=n_colors)
+def make_model(n_resblocks=20, n_feats=64, n_colors=3, batchnorm=False):
+    return MWCNN(n_resblocks=n_resblocks, n_feats=n_feats, n_colors=n_colors, batchnorm=batchnorm)
 
 class MWCNN(nn.Module):
-    def __init__(self, n_resblocks=20,n_feats=64 ,n_colors=3  , conv=common.default_conv):
+    def __init__(self, n_resblocks=20, n_feats=64, n_colors=3, batchnorm=False, conv=common.default_conv):
         super(MWCNN, self).__init__()
-        n_resblocks = n_resblocks
-        n_feats = n_feats
         kernel_size = 3
         self.scale_idx = 0
         nColor = n_colors
-
         act = nn.ReLU(True)
-
+        n_feats = n_feats
         self.DWT = common.DWT()
         self.IWT = common.IWT()
 
-        n = 1
-        m_head = [common.BBlock(conv, nColor, n_feats, kernel_size, act=act)]
-        d_l0 = []
-        d_l0.append(common.DBlock_com1(conv, n_feats, n_feats, kernel_size, act=act, bn=False))
+        m_head = [common.BBlock(conv, nColor, n_feats, kernel_size, act=act, bn=batchnorm)]
+        d_l0 = [common.DBlock_com1(conv, n_feats, n_feats, kernel_size, act=act, bn=batchnorm)]
 
+        d_l1 = [
+            common.BBlock(conv, n_feats * 4, n_feats * 2, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_com1(conv, n_feats * 2, n_feats * 2, kernel_size, act=act, bn=batchnorm)
+        ]
 
-        d_l1 = [common.BBlock(conv, n_feats * 4, n_feats * 2, kernel_size, act=act, bn=False)]
-        d_l1.append(common.DBlock_com1(conv, n_feats * 2, n_feats * 2, kernel_size, act=act, bn=False))
-
-        d_l2 = []
-        d_l2.append(common.BBlock(conv, n_feats * 8, n_feats * 4, kernel_size, act=act, bn=False))
-        d_l2.append(common.DBlock_com1(conv, n_feats * 4, n_feats * 4, kernel_size, act=act, bn=False))
-        pro_l3 = []
-        pro_l3.append(common.BBlock(conv, n_feats * 16, n_feats * 8, kernel_size, act=act, bn=False))
-        pro_l3.append(common.DBlock_com(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=False))
-        pro_l3.append(common.DBlock_inv(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=False))
-        pro_l3.append(common.BBlock(conv, n_feats * 8, n_feats * 16, kernel_size, act=act, bn=False))
-
-        i_l2 = [common.DBlock_inv1(conv, n_feats * 4, n_feats * 4, kernel_size, act=act, bn=False)]
-        i_l2.append(common.BBlock(conv, n_feats * 4, n_feats * 8, kernel_size, act=act, bn=False))
-
-        i_l1 = [common.DBlock_inv1(conv, n_feats * 2, n_feats * 2, kernel_size, act=act, bn=False)]
-        i_l1.append(common.BBlock(conv, n_feats * 2, n_feats * 4, kernel_size, act=act, bn=False))
-
-        i_l0 = [common.DBlock_inv1(conv, n_feats, n_feats, kernel_size, act=act, bn=False)]
-
+        d_l2 = [
+            common.BBlock(conv, n_feats * 8, n_feats * 4, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_com1(conv, n_feats * 4, n_feats * 4, kernel_size, act=act, bn=batchnorm)
+        ]
+        
+        pro_l3 = [
+            common.BBlock(conv, n_feats * 16, n_feats * 8, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_com(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_inv(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_com(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=batchnorm),
+            common.DBlock_inv(conv, n_feats * 8, n_feats * 8, kernel_size, act=act, bn=batchnorm),
+            common.BBlock(conv, n_feats * 8, n_feats * 16, kernel_size, act=act, bn=batchnorm)
+        ]
+        
+        i_l2 = [
+            common.DBlock_inv1(conv, n_feats * 4, n_feats * 4, kernel_size, act=act, bn=batchnorm),
+            common.BBlock(conv, n_feats * 4, n_feats * 8, kernel_size, act=act, bn=batchnorm)
+        ]
+        
+        i_l1 = [
+            common.DBlock_inv1(conv, n_feats * 2, n_feats * 2, kernel_size, act=act, bn=batchnorm),
+            common.BBlock(conv, n_feats * 2, n_feats * 4, kernel_size, act=act, bn=batchnorm)
+        ]
+        
+        i_l0 = [common.DBlock_inv1(conv, n_feats, n_feats, kernel_size, act=act, bn=batchnorm)]
         m_tail = [conv(n_feats, nColor, kernel_size)]
 
         self.head = nn.Sequential(*m_head)
@@ -68,7 +72,6 @@ class MWCNN(nn.Module):
         x_ = self.IWT(self.i_l2(x_)) + x1
         x_ = self.IWT(self.i_l1(x_)) + x0
         x = self.tail(self.i_l0(x_)) + x
-
         return x
 
     def set_scale(self, scale_idx):
@@ -88,7 +91,7 @@ class Model(nn.Module):
         self.save_models = args.save_models
 
         module = import_module('model.' + args.model.lower())
-        self.model = module.make_model(n_colors=args.n_colors).to(self.device)
+        self.model = module.make_model(n_colors=args.n_colors, batchnorm=args.batchnorm).to(self.device)
         if args.precision == 'half': self.model.half()
 
 
