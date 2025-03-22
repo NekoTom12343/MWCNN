@@ -18,24 +18,3 @@ python test_mat.py  -n /mnt/vinai/SIDD/ValidationNoisyBlocksSrgb.mat  -g /mnt/vi
   -ckpt checkpoints 
 
 ```
-
-# Codalab competition
-
-## Make data
-```
-unzip  /mnt/vinai/codalab/MAI2021_denoising_valid_cropped_noi.zip -d ~/codalab_val/
-```
-
-```
-python utils/crop_overlap.py
-```
-
-
-```
-python test_codalab.py -n ../codalab_val/ --save_img ../codalab_re -ckpt checkpoints
-```
-
-
-```
-python utils/merge_overlap.py
-```
