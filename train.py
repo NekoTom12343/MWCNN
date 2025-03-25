@@ -83,6 +83,8 @@ if __name__ == "__main__":
 
     psnr_sum = 0
     ssim_sum = 0
+    average_psnr_list = []
+    average_ssim_list = []
     loss_every_count = 0
     for epoch in range(start_epoch, args.epochs):
         for step, (noise, gt) in enumerate(data_loader):
@@ -118,12 +120,19 @@ if __name__ == "__main__":
                     'state_dict': model.model.state_dict(),
                     'best_loss': best_loss,
                     'optimizer': optimizer.state_dict(),
+                    'average_psnr_list': average_psnr_list,
+                    'average_ssim_list': average_ssim_list,
                 }
                 save_checkpoint(save_dict, is_best, checkpoint_dir, global_step)
             if global_step % args.loss_every == 0:
                 avg_psnr = psnr_sum / loss_every_count
                 avg_ssim = ssim_sum / loss_every_count
-                print(global_step, "Average PSNR:", avg_psnr, "Average SSIM:", avg_ssim)  
+                average_psnr_list.append([epoch, avg_psnr])
+                average_ssim_list.append([epoch, avg_ssim])
+                psnr_sum = 0
+                ssim_sum = 0
+                loss_every_count = 0
+                print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
                 print(average_loss.get_value())
             global_step +=1
         scheduler.step()
