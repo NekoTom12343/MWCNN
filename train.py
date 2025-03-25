@@ -15,7 +15,7 @@ import torch.nn as nn
 import numpy as np
 # import model
 from torchsummary import summary
-from utils.metric import calculate_psnr
+from utils.metric import calculate_psnr, calculate_ssim
 from utils.training_util import save_checkpoint,MovingAverage, load_checkpoint
 # from collections import OrderedDict
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
                 }
                 save_checkpoint(save_dict, is_best, checkpoint_dir, global_step)
             if global_step % args.loss_every == 0:
-                print(global_step ,"PSNR  : ",calculate_psnr(pred,gt))
+                print(global_step ,"PSNR  : ",calculate_psnr(pred,gt), "SSIM : ", calculate_ssim(pred,gt))
                 print(average_loss.get_value())
             global_step +=1
         scheduler.step()
