@@ -60,6 +60,8 @@ if __name__ == "__main__":
         start_epoch = 0
         global_step = 0
         best_loss = np.inf
+        average_psnr_list = []
+        average_ssim_list = []
         print('=> no checkpoint file to be loaded.')
     else:
         try:
@@ -68,6 +70,8 @@ if __name__ == "__main__":
             global_step = checkpoint['global_iter']
             best_loss = checkpoint['best_loss']
             state_dict = checkpoint['state_dict']
+            average_psnr_list = checkpoint['average_psnr_list']
+            average_ssim_list = checkpoint['average_ssim_list']
             # new_state_dict = OrderedDict()
             # for k, v in state_dict.items():
             #     name = "model."+ k  # remove `module.`
@@ -79,12 +83,12 @@ if __name__ == "__main__":
             start_epoch = 0
             global_step = 0
             best_loss = np.inf
+            average_psnr_list = []
+            average_ssim_list = []
             print('=> no checkpoint file to be loaded.')
 
     psnr_sum = 0
     ssim_sum = 0
-    average_psnr_list = []
-    average_ssim_list = []
     loss_every_count = 0
     for epoch in range(start_epoch, args.epochs):
         for step, (noise, gt) in enumerate(data_loader):
