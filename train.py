@@ -80,6 +80,10 @@ if __name__ == "__main__":
             global_step = 0
             best_loss = np.inf
             print('=> no checkpoint file to be loaded.')
+
+    psnr_sum = 0
+    ssim_sum = 0
+    loss_every_count = 0
     for epoch in range(start_epoch, args.epochs):
         for step, (noise, gt) in enumerate(data_loader):
             noise = noise.to(device)
@@ -91,6 +95,15 @@ if __name__ == "__main__":
             loss.backward()
             optimizer.step()
             average_loss.update(loss)
+
+            # Calculate PSNR and SSIM for the current step
+            psnr = calculate_psnr(pred, gt)
+            ssim = calculate_ssim(pred, gt)
+
+            # Update the running sums and count
+            psnr_sum += psnr
+            ssim_sum += ssim
+            loss_every_count += 1
             if global_step % args.save_every == 0:
                 print(len(average_loss._cache))
                 if average_loss.get_value() < best_loss:
@@ -108,7 +121,9 @@ if __name__ == "__main__":
                 }
                 save_checkpoint(save_dict, is_best, checkpoint_dir, global_step)
             if global_step % args.loss_every == 0:
-                print(global_step ,"PSNR  : ",calculate_psnr(pred,gt), "SSIM : ", calculate_ssim(pred,gt))
+                avg_psnr = psnr_sum / loss_every_count
+                avg_ssim = ssim_sum / loss_every_count
+                print(global_step, "Average PSNR:", avg_psnr, "Average SSIM:", avg_ssim)  
                 print(average_loss.get_value())
             global_step +=1
         scheduler.step()
