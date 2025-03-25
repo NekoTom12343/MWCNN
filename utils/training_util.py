@@ -54,8 +54,8 @@ def load_checkpoint(checkpoint_dir, cuda=True, best_or_latest='best'):
                                        '{:06d}.pth.tar'.format(iters[-1]))
     
     if cuda:
-        load_result = torch.load(checkpoint_file, weights_only=True)
+        load_result = torch.load(checkpoint_file, weights_only=False)
     else:
-        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'), weights_only=True)
+        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'), weights_only=False)
     
     return load_result
