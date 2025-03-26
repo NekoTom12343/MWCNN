@@ -132,6 +132,18 @@ class MWCNN1(nn.Module):
         self.i_l1 = nn.Sequential(*i_l1)
         self.i_l0 = nn.Sequential(*i_l0)
         self.tail = nn.Sequential(*m_tail)
+    def forward(self, x):
+        x0 = self.d_l0(self.head(x))
+        x1 = self.d_l1(self.DWT(x0))
+        x2 = self.d_l2(self.DWT(x1))
+        x_ = self.IWT(self.pro_l3(self.DWT(x2))) + x2
+        x_ = self.IWT(self.i_l2(x_)) + x1
+        x_ = self.IWT(self.i_l1(x_)) + x0
+        x = self.tail(self.i_l0(x_)) + x
+        return x
+
+    def set_scale(self, scale_idx):
+        self.scale_idx = scale_idx
 
 class Model(nn.Module):
     def __init__(self, args):
