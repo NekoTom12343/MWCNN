@@ -81,7 +81,7 @@ class MWCNN(nn.Module):
 
 class MWCNN1(nn.Module):
     def __init__(self, n_resblocks=20, n_feats=64, n_colors=3, batchnorm=False, conv=common.default_conv):
-        super(MWCNN, self).__init__()
+        super(MWCNN1, self).__init__()
         kernel_size = 3
         self.scale_idx = 0
         nColor = n_colors
