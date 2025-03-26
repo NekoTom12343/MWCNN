@@ -116,7 +116,18 @@ if __name__ == "__main__":
                     best_loss = average_loss.get_value()
                 else:
                     is_best = False
+                # Calculate the average PSNR and SSIM for the current epoch
+                avg_psnr_epoch = psnr_sum / loss_every_count if loss_every_count > 0 else 0
+                avg_ssim_epoch = ssim_sum / loss_every_count if loss_every_count > 0 else 0
 
+                # Append the epoch-level averages to the lists
+                average_psnr_list.append([epoch, avg_psnr_epoch])
+                average_ssim_list.append([epoch, avg_ssim_epoch])
+
+                # Reset the running sums and count for the next epoch
+                psnr_sum = 0
+                ssim_sum = 0
+                loss_every_count = 0
                 save_dict = {
                     'epoch': epoch,
                     'global_iter': global_step,
@@ -129,11 +140,6 @@ if __name__ == "__main__":
             if global_step % args.loss_every == 0:
                 avg_psnr = psnr_sum / loss_every_count
                 avg_ssim = ssim_sum / loss_every_count
-                average_psnr_list.append([epoch, avg_psnr])
-                average_ssim_list.append([epoch, avg_ssim])
-                psnr_sum = 0
-                ssim_sum = 0
-                loss_every_count = 0
                 print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
                 print(average_loss.get_value())
             global_step +=1
