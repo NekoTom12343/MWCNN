@@ -109,6 +109,11 @@ if __name__ == "__main__":
             psnr_sum += psnr
             ssim_sum += ssim
             loss_every_count += 1
+            if global_step % args.loss_every == 0:
+                avg_psnr = psnr_sum / loss_every_count if loss_every_count > 0 else 0
+                avg_ssim = ssim_sum / loss_every_count if loss_every_count > 0 else 0
+                print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
+                print(average_loss.get_value())
             if global_step % args.save_every == 0:
                 print(len(average_loss._cache))
                 if average_loss.get_value() < best_loss:
@@ -137,11 +142,6 @@ if __name__ == "__main__":
                 }
                 save_checkpoint(save_dict, is_best, checkpoint_dir, global_step)
                 save_metrics_to_file(average_psnr_list, average_ssim_list, checkpoint_dir)
-            if global_step % args.loss_every == 0:
-                avg_psnr = psnr_sum / loss_every_count if loss_every_count > 0 else 0
-                avg_ssim = ssim_sum / loss_every_count if loss_every_count > 0 else 0
-                print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
-                print(average_loss.get_value())
             global_step +=1
         scheduler.step()
 
