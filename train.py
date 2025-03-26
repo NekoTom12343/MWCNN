@@ -108,12 +108,16 @@ if __name__ == "__main__":
             # Update the running sums and count
             psnr_sum += psnr
             ssim_sum += ssim
+            del psnr, ssim
             loss_every_count += 1
             if global_step % args.loss_every == 0:
                 avg_psnr = psnr_sum / loss_every_count if loss_every_count > 0 else 0
                 avg_ssim = ssim_sum / loss_every_count if loss_every_count > 0 else 0
                 print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
                 print(average_loss.get_value())
+                psnr_sum = 0
+                ssim_sum = 0
+                loss_every_count = 0
             if global_step % args.save_every == 0:
                 print(len(average_loss._cache))
                 if average_loss.get_value() < best_loss:
