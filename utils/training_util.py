@@ -54,8 +54,41 @@ def load_checkpoint(checkpoint_dir, cuda=True, best_or_latest='best'):
                                        '{:06d}.pth.tar'.format(iters[-1]))
     
     if cuda:
-        load_result = torch.load(checkpoint_file, weights_only=False)
+        load_result = torch.load(checkpoint_file, weights_only=True)
     else:
-        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'), weights_only=False)
+        load_result = torch.load(checkpoint_file, map_location=torch.device('cpu'), weights_only=True)
     
     return load_result
+
+def save_metrics_to_file(psnr_list, ssim_list, checkpoint_dir):
+    psnr_file = os.path.join(checkpoint_dir, "average_psnr_list.txt")
+    ssim_file = os.path.join(checkpoint_dir, "average_ssim_list.txt")
+    
+    with open(psnr_file, "w") as f:
+        for epoch, psnr in psnr_list:
+            f.write(f"{epoch},{psnr}\n")
+    
+    with open(ssim_file, "w") as f:
+        for epoch, ssim in ssim_list:
+            f.write(f"{epoch},{ssim}\n")
+
+def load_metrics_from_file(checkpoint_dir):
+    psnr_file = os.path.join(checkpoint_dir, "average_psnr_list.txt")
+    ssim_file = os.path.join(checkpoint_dir, "average_ssim_list.txt")
+    
+    psnr_list = []
+    ssim_list = []
+    
+    if os.path.exists(psnr_file):
+        with open(psnr_file, "r") as f:
+            for line in f:
+                epoch, psnr = line.strip().split(",")
+                psnr_list.append([int(epoch), float(psnr)])
+    
+    if os.path.exists(ssim_file):
+        with open(ssim_file, "r") as f:
+            for line in f:
+                epoch, ssim = line.strip().split(",")
+                ssim_list.append([int(epoch), float(ssim)])
+    
+    return psnr_list, ssim_list

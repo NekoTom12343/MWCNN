@@ -16,7 +16,7 @@ import numpy as np
 # import model
 from torchsummary import summary
 from utils.metric import calculate_psnr, calculate_ssim
-from utils.training_util import save_checkpoint,MovingAverage, load_checkpoint
+from utils.training_util import save_checkpoint,MovingAverage, load_checkpoint, load_metrics_from_file, save_metrics_to_file
 # from collections import OrderedDict
 
 
@@ -70,8 +70,7 @@ if __name__ == "__main__":
             global_step = checkpoint['global_iter']
             best_loss = checkpoint['best_loss']
             state_dict = checkpoint['state_dict']
-            average_psnr_list = checkpoint['average_psnr_list']
-            average_ssim_list = checkpoint['average_ssim_list']
+            average_psnr_list, average_ssim_list = load_metrics_from_file(checkpoint_dir)  # Load metrics from files
             # new_state_dict = OrderedDict()
             # for k, v in state_dict.items():
             #     name = "model."+ k  # remove `module.`
@@ -124,10 +123,9 @@ if __name__ == "__main__":
                     'state_dict': model.model.state_dict(),
                     'best_loss': best_loss,
                     'optimizer': optimizer.state_dict(),
-                    'average_psnr_list': average_psnr_list,
-                    'average_ssim_list': average_ssim_list,
                 }
                 save_checkpoint(save_dict, is_best, checkpoint_dir, global_step)
+                save_metrics_to_file(average_psnr_list, average_ssim_list, checkpoint_dir)
             if global_step % args.loss_every == 0:
                 avg_psnr = psnr_sum / loss_every_count
                 avg_ssim = ssim_sum / loss_every_count
