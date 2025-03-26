@@ -115,6 +115,10 @@ if __name__ == "__main__":
                 avg_ssim = ssim_sum / loss_every_count if loss_every_count > 0 else 0
                 print(global_step, "Average PSNR:", avg_psnr,"  |  ", "Average SSIM:", avg_ssim)  
                 print(average_loss.get_value())
+                if global_step % args.save_every != 0:
+                    psnr_sum = 0
+                    ssim_sum = 0
+                    loss_every_count = 0
             if global_step % args.save_every == 0:
                 print(len(average_loss._cache))
                 if average_loss.get_value() < best_loss:
